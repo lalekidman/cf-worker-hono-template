@@ -1,5 +1,7 @@
 {
 	"name": "template",
+	"version": "0.0.1",
+	"description": "my-hono-app is a simple hono app.",
 	"scripts": {
 		"dev": "wrangler dev",
 		"deploy": "wrangler deploy --minify",

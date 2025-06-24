@@ -12,6 +12,10 @@
     "jsxImportSource": "hono/jsx",
     "types": [
         "./worker-configuration.d.ts"
-    ]
+    ],
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+    }
   },
 }
