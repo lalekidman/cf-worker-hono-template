@@ -1,21 +1,23 @@
-import { Hono } from 'hono'
-import { corsMiddleware } from '@/middleware/cors';
-import pck from '../package.json';
-import { errorController } from './controllers';
-const app = new Hono<{ Bindings: CloudflareBindings }>();
+import app from "./app"
 
-app.use('*', corsMiddleware);
-app.get("/ver", (c) => {
-  return c.json({
-    name: pck.name,
-    version: pck.version,
-    description: pck.description,
-  });
-});
+export default {
+  async fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext) {
+    const url = new URL(request.url)
+    const pathname = url.pathname
+    const dropFirstSegment = env.DROP_FIRST_SEGMENT && env.DROP_FIRST_SEGMENT === "true" || false;
 
-app.get("/health", (c) => {
-  return c.json({ status: "healthy", timestamp: new Date().toISOString() });
-});
+    if (dropFirstSegment) {
+      // Remove first segment from path
+      const segments = pathname.split('/').filter(Boolean)
+      const strippedPath = '/' + segments.slice(1).join('/')
+  
+      // Rewrite the URL
+      url.pathname = strippedPath
+    }
 
-app.onError(errorController as any);
-export default app
+    // Reconstruct the Request with the modified URL
+    const newRequest = new Request(url.toString(), request)
+
+    return app.fetch(newRequest, env, ctx)
+  }
+}
