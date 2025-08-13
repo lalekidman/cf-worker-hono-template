@@ -1,4 +1,5 @@
 import { Context, Next } from "hono";
+import { Connection } from "./pagination";
 
 export interface IErrorResponse {
   error: string;
@@ -26,10 +27,17 @@ export class ResponseHandler {
   }
 
   static success(context: Context, data: any): Response {
+    return ResponseHandler.ok(context, data);
+  }
+
+  static ok(context: Context, data: any): Response {
     return ResponseHandler.default(context, data, 200);
   }
 
   static badRequest(context: Context, message: string, details?: any): Response {
+    if (details instanceof Error) {
+      details = details.message;
+    }
     return ResponseHandler.default(context, new ErrorResponse(message, details), 400);
   }
 
@@ -57,5 +65,12 @@ export class ResponseHandler {
     console.error(`${defaultMessage}:`, error);
     await next();
     return;
+  }
+
+  /**
+   * Return a relay connection response
+   */
+  static relay<T>(context: Context, connection: Connection<T>): Response {
+    return ResponseHandler.ok(context, connection);
   }
 }

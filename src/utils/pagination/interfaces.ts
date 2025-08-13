@@ -75,3 +75,9 @@ export interface DrizzleColumn {
 export interface DrizzleTableLike {
   [key: string]: DrizzleColumn;
 }
+
+export interface AdditionalConditions<T = any> {
+  fieldName: keyof T;
+  value: any;
+  operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'nin' | 'like' | 'nlike' | 'ilike' | 'nilike' | 'is' | 'isNot' | 'isNotNull' | 'isNull';
+}

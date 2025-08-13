@@ -8,23 +8,23 @@ export const makeBaseEntity = <ID = string>(
   class BaseEntity implements IEntityBaseProperties<ID> {
     public id: ID;
 
-    public createdAt: number = 0;
-    public updatedAt: number = 0;
+    public createdAt: Date;
+    public updatedAt: Date;
 
     public _v: number = 0;
     
     constructor (data?: Partial<IEntityBaseProperties<ID>>) {
       this.id = data?.id || generateId()
       this._v = data?._v || 0;
-      this.createdAt = data?.createdAt || new Date().getTime();
-      this.updatedAt = data?.updatedAt || 0;
+      this.createdAt = data?.createdAt || new Date()
+      this.updatedAt = data?.updatedAt || new Date(0);
     }
 
     /**
      * Update the entity
      */
     public update () {
-      this.updatedAt = Date.now();
+      this.updatedAt = new Date()
       this._v++;
     }
   

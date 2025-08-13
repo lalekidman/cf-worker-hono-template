@@ -5,8 +5,12 @@ export interface IEntityBaseDependencies<T = string> {
 export interface IEntityBaseProperties<ID = string> {
   id: ID
   
-  createdAt: number
-  updatedAt: number
+  createdAt: Date
+  updatedAt: Date
   
   _v: number
+}
+export type IEntityMethodBaseProperties<T> = T & {
+  update(): void
+  toObject(): T
 }
