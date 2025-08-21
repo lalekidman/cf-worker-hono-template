@@ -13,6 +13,48 @@
 	},
 	"observability": {
 		"enabled": true
+	},
+	"vars": {
+		"NODE_ENV":"local",
+		"BASE_URL": "http://localhost:8787",
+		"URL_PATH_PREFIX": "",
+		"DROP_FIRST_SEGMENT": "false"
+	},
+	"env": {
+		"dev": {
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "applications",
+					"database_id": "f8d20196-0e14-4830-82b2-9a843a069934"
+				}
+			],
+			"kv_namespaces": [
+				{
+					"binding": "JWT_AUTH_KV",
+					"id": "69214c4210384966913ba169e5518ebf",
+				}
+			],
+			"services": [
+				{
+					"binding": "AUTH_SERVICE",
+					"service": "auth-service-dev"
+				}
+			],
+			"vars": {
+				"NODE_ENV":"development",
+				"BASE_URL": "https://dev-api.10x.io",
+				"URL_PATH_PREFIX": "/applications",
+				"DROP_FIRST_SEGMENT": "true"
+			},
+			"routes": [
+				{
+					"pattern": "dev-api.10x.io/applications/*",
+					"zone_id": "44d57fac515b2e947886926744494c03",
+					"custom_domain": false,
+				}
+			]
+		}
 	}
 	/**
 	 * Smart Placement

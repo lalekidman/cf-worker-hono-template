@@ -91,33 +91,6 @@ export abstract class BaseRepositoryService<T extends IEntityBaseProperties> imp
       // updatedAt: typeof row.updatedAt === 'number' ? row.updatedAt : row.updatedAt.getTime(),
     } : null
   }
-  /**
-   * List channelsTable with relay pagination
-   */
-  async listRelay(
-    paginationArgs: RelayPaginationArgs,
-    options: RelayPaginationOptions = {},
-    additionalConditions: AdditionalConditions<T>[]
-  ): Promise<Connection<any>> {
-    // fieldName, ac
-    // const { types, parents, ids } = listOptions;
-    // Build where conditions
-    const conditions = await this.buildConditions(additionalConditions);
-    // Use relay pagination
-    const relayPagination = new RelayPagination(this.db, this.table, {
-      cursorField: ['createdAt'],
-      defaultLimit: 20,
-      maxLimit: 100,
-      includeTotalCount: true,
-      ...options
-    });
-
-    return relayPagination.paginate<any>(
-      paginationArgs,
-      options,
-      conditions
-    );
-  }
 
   async buildConditions(additionalConditions: AdditionalConditions<T>[]): Promise<SQL[]> {
     return additionalConditions.map((condition) => {

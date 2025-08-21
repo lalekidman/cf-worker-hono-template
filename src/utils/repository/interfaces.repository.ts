@@ -11,9 +11,4 @@ export interface IBaseRepository<T> {
   deleteById(id: string): Promise<boolean>;
   delete(entity: Partial<T>): Promise<boolean>;
 
-  listRelay(
-    paginationArgs: RelayPaginationArgs,
-    options: RelayPaginationOptions,
-    additionalConditions: AdditionalConditions<T>[]
-  ): Promise<Connection<T>>;
 }
