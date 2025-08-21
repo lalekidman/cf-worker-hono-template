@@ -11,6 +11,12 @@
 		"binding": "ASSETS",
 		"directory": "./public"
 	},
+	"r2_buckets": [
+		{
+			"binding": "R2_BUCKET",
+			"bucket_name": "file-uploads-local"
+		}
+	],
 	"observability": {
 		"enabled": true
 	},
@@ -27,6 +33,12 @@
 					"binding": "DB",
 					"database_name": "applications",
 					"database_id": "f8d20196-0e14-4830-82b2-9a843a069934"
+				}
+			],
+			"r2_buckets": [
+				{
+					"binding": "R2_BUCKET",
+					"bucket_name": "file-uploads"
 				}
 			],
 			"kv_namespaces": [
