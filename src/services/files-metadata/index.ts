@@ -1,5 +1,5 @@
-import { IFilesMetadataBase, IFilesMetadataEntity, FilesMetadataEntity } from '@/entities/files-metadata'
-import { IFilesMetadataRepositoryService } from './interfaces'
+import { IFilesMetadataBase, IFilesMetadataEntity, FilesMetadataEntity, FileStatus } from '@/entities/files-metadata'
+import { IFilesMetadataInput, IFilesMetadataRepositoryService } from './interfaces'
 import { BaseService } from '@/utils/services/service'
 
 export class FilesMetadataService extends BaseService<IFilesMetadataBase, IFilesMetadataEntity> {
@@ -9,7 +9,9 @@ export class FilesMetadataService extends BaseService<IFilesMetadataBase, IFiles
     super(FilesMetadataEntity)
   }
 
-  async create(data: Omit<IFilesMetadataBase, 'id' | 'createdAt' | 'updatedAt' | '_v' | 'uploaded'>): Promise<FilesMetadataEntity> {
+  async create(
+    data: IFilesMetadataInput
+  ): Promise<FilesMetadataEntity> {
     try {
       const entity = new FilesMetadataEntity(data);
       await this.repositoryService.insert(entity.toObject());
@@ -30,14 +32,14 @@ export class FilesMetadataService extends BaseService<IFilesMetadataBase, IFiles
     data.filepath && (entity.filepath = data.filepath);
     data.filesize && (entity.filesize = data.filesize);
     data.contentType && (entity.contentType = data.contentType);
-    typeof data.uploaded === 'boolean' && (entity.uploaded = data.uploaded);
+    data.status && (entity.status = data.status);
     await this.repositoryService.update(id, data);
     return entity;
   }
 
   async markFileAsUploaded(id: string): Promise<boolean> {
     return this.repositoryService.update(id, {
-      uploaded: true
+      status: FileStatus.COMPLETED
     });
   }
 }

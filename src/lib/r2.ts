@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { PresignedUrlRequest, PresignedUrlResponse } from '@/validations/files';
+import { PresignedUrlRequest, PresignedUrlResponse } from '@/validations/files-metadata';
 
 export class R2Service {
   private s3Client: S3Client;
@@ -22,7 +22,7 @@ export class R2Service {
     });
   }
 
-  async generatePresignedUrl(request: PresignedUrlRequest & {filepath: string}): Promise<PresignedUrlResponse> {
+  async generatePresignedUrl(request: PresignedUrlRequest & {filepath: string, bucketName?: string}): Promise<PresignedUrlResponse> {
     // Generate a unique key for the file
     const timestamp = Date.now();
     const randomSuffix = Math.random().toString(36).substring(2, 15);

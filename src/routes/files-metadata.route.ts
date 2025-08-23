@@ -35,7 +35,7 @@ filesMetadataRoute.post("/", controller.createFileMetadata.bind(controller));
 filesMetadataRoute.get("/", controller.listFilesMetadata.bind(controller));
 filesMetadataRoute.get("/:id", controller.getFileMetadata.bind(controller));
 filesMetadataRoute.put("/:id", controller.updateFileMetadata.bind(controller));
-filesMetadataRoute.patch("/:id/mark-uploaded", controller.markFileAsUploaded.bind(controller));
+filesMetadataRoute.patch("/:id/mark-completed", controller.markFileAsUploaded.bind(controller));
 filesMetadataRoute.delete("/:id", controller.deleteFileMetadata.bind(controller));
 
 export { filesMetadataRoute };

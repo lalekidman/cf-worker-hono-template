@@ -1,3 +1,4 @@
+import { FileStatus } from '@/entities/files-metadata';
 import { z } from 'zod';
 
 export const presignedUrlSchema = z.object({
@@ -22,7 +23,6 @@ export const createFileMetadataSchema = z.object({
   filepath: z.string().min(1, 'File path is required').max(500, 'File path too long'),
   contentType: z.string().min(1, 'Content type is required'),
   filesize: z.number().positive('File size must be positive'),
-  uploaded: z.boolean().optional().default(false),
 });
 
 export const updateFileMetadataSchema = z.object({
@@ -30,9 +30,14 @@ export const updateFileMetadataSchema = z.object({
   filepath: z.string().min(1, 'File path is required').max(500, 'File path too long').optional(),
   contentType: z.string().min(1, 'Content type is required').optional(),
   filesize: z.number().positive('File size must be positive').optional(),
-  uploaded: z.boolean().optional(),
+  status: z.string().optional(),
 });
 
 export const fileIdSchema = z.object({
   id: z.string().min(1, 'File ID is required'),
+});
+export const fileMetadataUpdateStatusInputSchema = fileIdSchema.extend({
+  data: z.object({
+    status: z.enum([FileStatus.COMPLETED, FileStatus.FAILED])
+  })
 });

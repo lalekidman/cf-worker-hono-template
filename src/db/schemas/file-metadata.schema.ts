@@ -7,7 +7,8 @@ export const filesMetadataSchema = sqliteTable('files_metadata', {
   filename: text('filename').notNull(),
   filepath: text('filepath').notNull(),
   filesize: integer('filesize', {mode: "number"}).notNull(),
-  expiresIn: integer('expires_in', {mode: "number"}).default(3600), // 1hr
+  bucketName: text('bucket_name').notNull().default(""),
+  expiresAt: integer('expires_in', {mode: "timestamp"}),
   contentType: text('content_type').notNull(),
-  uploaded: integer('uploaded', { mode: 'boolean' }).notNull().default(false),
+  status: text('status').notNull().default('pending'),
 } as Record<keyof IFilesMetadataBase, any>);

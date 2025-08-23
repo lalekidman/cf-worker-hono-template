@@ -1,6 +1,16 @@
 import { IFilesMetadataBase } from "@/entities/files-metadata";
 import { IBaseRepositoryService } from "@/utils/repository/interfaces.repository";
 
+export interface IFilesMetadataInput extends Pick<IFilesMetadataBase,
+| 'filename'
+| 'filepath'
+| 'filesize'
+| 'contentType'
+| 'bucketName'
+> {
+  expiresIn?: number
+}
+
 export interface IFilesMetadataRepositoryService extends IBaseRepositoryService<IFilesMetadataBase> {
   // markAsUploaded(id: string): Promise<boolean>;
   // findByFilename(filename: string): Promise<IFilesMetadataBase[]>;

@@ -118,17 +118,13 @@ export class FilesMetadataController {
   async listFilesMetadata(c: Context) {
     try {
       const query = c.req.query();
-      const { uploaded, contentType, filename } = query;
+      const { status, contentType, filename } = query;
 
       let files;
       
-      if (uploaded === 'true') {
-        files = await this.filesMetadataService.repositoryService.find([
-          { fieldName: 'uploaded', value: true, operator: 'eq' }
-        ]);
-      } else if (uploaded === 'false') {
-        files = await this.filesMetadataService.repositoryService.find([
-          { fieldName: 'uploaded', value: false, operator: 'eq' }
+      if (status) {
+        files = await this.filesMetadataService.find([
+          { fieldName: 'status', value: status, operator: 'eq' }
         ]);
       } else if (contentType) {
         files = await this.filesMetadataService.repositoryService.find([

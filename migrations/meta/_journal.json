@@ -22,6 +22,20 @@
       "when": 1755874395306,
       "tag": "0002_furry_wallow",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1755961496345,
+      "tag": "0003_large_silk_fever",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1755961672103,
+      "tag": "0004_glossy_pixie",
+      "breakpoints": true
     }
   ]
 }

@@ -30,7 +30,7 @@ export abstract class BaseService<T extends IEntityBaseProperties, Entity extend
   ): Promise<Entity> {
     const result = await this.findById(id);
     if (!result) {
-      throw new Error("No user settings found.");
+      throw new Error("No data found.");
     }
     return result;
   }

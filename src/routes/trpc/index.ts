@@ -1,10 +1,10 @@
 import { createTRPCContext, router, protectedProcedure } from '@/lib/trpc';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { Context } from 'hono';
-import { filesRoute } from './files.route';
+import { filesMetadataRoute } from './files-metadata.trpc-route';
 
 export const appRouter = router({
-  files: filesRoute,
+  files: filesMetadataRoute,
 });
 export type AppRouter = typeof appRouter;
 

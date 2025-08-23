@@ -4,36 +4,45 @@ import {
 } from "@/utils/entities"
 import {
   IFilesMetadataBase,
-  IFilesMetadataEntity
+  IFilesMetadataEntity,
+  FileStatus
 } from "./interfaces"
 
-export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): new (data?: Partial<IFilesMetadataBase>) => IFilesMetadataEntity => {
+export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): new (data?: Partial<IFilesMetadataBase & {expiresIn: number} >) => IFilesMetadataEntity => {
   class FilesMetadataEntity extends makeBaseEntity(dependencies) implements IFilesMetadataEntity {
 
-    private _uploaded: boolean = false;
+    private _status: string = FileStatus.PENDING;
     private _filename: string = '';
     private _filepath: string = '';
     private _contentType: string = '';
     private _filesize: number = 0;
-    private _expiresIn: number = 3600; // 1hr
+    private _bucketName: string = '';
+    private _expiresAt: Date = new Date(Date.now() + (60 * 60 * 1000)); // 1hr
 
-    constructor(data ? : Partial < IFilesMetadataBase >) {
+    constructor(data ? : Partial < IFilesMetadataBase & {expiresIn: number} >) {
       super(data);
       const {
         contentType,
         filepath,
         filesize,
-        uploaded,
+        status,
         filename,
-        expiresIn,
+        bucketName,
+        expiresAt,
+        expiresIn
       } = data || {};
 
       filename && (this.filename = filename);
       filepath && (this.filepath = filepath);
       filesize && (this.filesize = filesize);
       contentType && (this.contentType = contentType);
-      typeof expiresIn === 'number' && (this.expiresIn = expiresIn);
-      typeof uploaded === 'boolean' && uploaded && this.markAsUploaded();
+      bucketName && (this.bucketName = bucketName);
+      if (expiresAt) {
+        this.expiresAt = expiresAt
+      } else if (expiresIn) {
+        this.expiresAt = new Date(Date.now() + (60 * 60 * 1000)); // 1hr
+      }
+      status && (this.status = status);
     }
 
     /**
@@ -99,31 +108,68 @@ export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): 
     }
 
     /**
-     * Getter expiresIn
-     * @return {number }
+     * Getter bucketName
+     * @return {string }
      */
-    public get expiresIn(): number  {
-      return this._expiresIn;
-    }
-
-      /**
-       * Setter expiresIn
-       * @param {number } value
-       */
-    public set expiresIn(value: number ) {
-      this._expiresIn = value;
+    public get bucketName(): string  {
+      return this._bucketName;
     }
 
     /**
-     * Getter uploaded
-     * @return {boolean }
+     * Setter bucketName
+     * @param {string } value
      */
-    public get uploaded(): boolean  {
-      return this._uploaded;
+    public set bucketName(value: string ) {
+      this._bucketName = value;
     }
-    public markAsUploaded(): boolean {
-      this._uploaded = true;
-      return this.uploaded;
+
+    /**
+     * Getter expiresAt
+     * @return {Date }
+     */
+    public get expiresAt(): Date  {
+      return this._expiresAt;
+    }
+
+      /**
+       * Setter expiresAt
+       * @param {Date } value
+       */
+    public set expiresAt(value: Date) {
+      this._expiresAt = value;
+    }
+
+    /**
+     * Getter status
+     * @return {string }
+     */
+    public get status(): string  {
+      return this._status;
+    }
+
+    /**
+     * Setter status
+     * @param {string } value
+     */
+    public set status(value: string ) {
+      this._status = value;
+    }
+
+    public markAsCompleted() {
+      this._status = FileStatus.COMPLETED;
+    }
+    public markAsFailed() {
+      this._status = FileStatus.FAILED;
+    }
+
+    public isPending(): boolean {
+      return this.status === FileStatus.PENDING.toString();
+    }
+    public isCompleted(): boolean {
+      return this.status === FileStatus.COMPLETED.toString();
+    }
+    public isFailed(): boolean {
+      return this.status === FileStatus.FAILED.toString();
     }
     /**
      * Getter location
@@ -133,7 +179,7 @@ export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): 
       return `${this.filepath}/${this.filename}`;
     }
     public isExpired(): boolean {
-      return (this.createdAt.getTime() + (this.expiresIn * 1000)) < Date.now();
+      return this.expiresAt.getTime() < Date.now();
     }
     /**
      * 
@@ -146,8 +192,9 @@ export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): 
         filepath: this.filepath,
         filesize: this.filesize,
         contentType: this.contentType,
-        uploaded: this.uploaded,
-        expiresIn: this.expiresIn,
+        bucketName: this.bucketName,
+        status: this.status,
+        expiresAt: this.expiresAt,
       }
     }
   }

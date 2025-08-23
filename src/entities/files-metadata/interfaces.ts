@@ -3,16 +3,27 @@ import {
   IEntityMethodBaseProperties
 } from '@/utils/entities'
 
+export enum FileStatus {
+  PENDING = 'pending',
+  FAILED = 'failed',
+  COMPLETED = 'completed'
+}
+
 export interface IFilesMetadataBase extends IEntityBaseProperties {
-  uploaded: boolean
+  status: string
   filename: string
   filepath: string
   contentType: string
   filesize: number
-  expiresIn: number
+  bucketName: string
+  expiresAt: Date
 }
 
 export interface IFilesMetadataEntity extends IEntityMethodBaseProperties<IFilesMetadataBase> {
-  markAsUploaded (): boolean
+  markAsCompleted (): void
+  markAsFailed (): void
+  isCompleted (): boolean
+  isFailed (): boolean
+  isPending (): boolean
   isExpired(): boolean
 }
