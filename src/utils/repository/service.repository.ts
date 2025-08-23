@@ -1,10 +1,10 @@
 import { DB } from "@/db";
-import { IBaseRepository } from "./interfaces.repository";
+import { IBaseRepositoryService } from "./interfaces.repository";
 import { and, eq, gte, inArray, isNotNull, isNull, lt, lte, ne, SQL } from "drizzle-orm";
 import { IEntityBaseProperties } from "@/utils/entities";
 import { AdditionalConditions, Connection, RelayPagination, RelayPaginationArgs, RelayPaginationOptions } from "../pagination";
 
-export abstract class BaseRepositoryService<T extends IEntityBaseProperties> implements IBaseRepository<T> {
+export abstract class BaseRepositoryService<T extends IEntityBaseProperties> implements IBaseRepositoryService<T> {
   protected readonly operators = {
     eq,
     ne,

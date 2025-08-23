@@ -1,1 +1,1 @@
-export {}
+export { filesMetadataRoute } from "./files-metadata.route";

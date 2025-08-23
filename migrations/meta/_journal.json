@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1755873529429,
+      "tag": "0000_steep_dracula",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1755874048070,
+      "tag": "0001_silky_blade",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1755874395306,
+      "tag": "0002_furry_wallow",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,1 +1,1 @@
-export {}
+export * from "./file-metadata.schema"

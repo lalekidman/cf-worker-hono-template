@@ -3,14 +3,17 @@
 	"version": "0.0.1",
 	"description": "my-hono-app is a simple hono app.",
 	"scripts": {
-		"dev": "wrangler dev --port 9002 --inspector-port 9331",
+		"dev": "wrangler dev --port 9005 --inspector-port 9332",
 		"deploy": "wrangler deploy --minify",
 		"typegen": "wrangler types --env-interface CloudflareBindings",
 		"db:generate": "drizzle-kit generate",
-		"db:migrate": "wrangler d1 execute spaces --local --file=./migrations/0000_lowly_wolverine.sql",
-		"db:migrate:prod": "wrangler d1 execute spaces --remote --file=./migrations/0000_secret_groot.sql"
+		"db:migrate": "wrangler d1 execute files-dev --local --file=./migrations/0000_lowly_wolverine.sql",
+		"db:migrate:dev": "wrangler d1 execute files-dev --remote --file=./migrations/0000_secret_groot.sql",
+		"db:execute:local": "wrangler d1 execute files-dev --local"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.872.0",
+		"@aws-sdk/s3-request-presigner": "^3.872.0",
 		"@hono/zod-validator": "^0.7.0",
 		"@trpc/server": "^11.4.3",
 		"cloudflare": "^4.5.0",

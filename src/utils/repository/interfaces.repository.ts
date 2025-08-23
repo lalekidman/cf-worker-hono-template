@@ -1,6 +1,6 @@
-import { AdditionalConditions, Connection, RelayPaginationArgs, RelayPaginationOptions } from "../pagination";
+import { AdditionalConditions } from "../pagination";
 
-export interface IBaseRepository<T> {
+export interface IBaseRepositoryService<T> {
   // Query methods
   findById(id: string): Promise<T | null>;
   findOne(entity: Partial<T>): Promise<T | null>;
