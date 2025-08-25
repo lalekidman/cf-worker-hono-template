@@ -6,7 +6,7 @@ import {
 export enum FileStatus {
   PENDING = 'pending',
   FAILED = 'failed',
-  COMPLETED = 'completed'
+  ACTIVE = 'active'
 }
 
 export interface IFilesMetadataBase extends IEntityBaseProperties {
@@ -17,13 +17,18 @@ export interface IFilesMetadataBase extends IEntityBaseProperties {
   filesize: number
   bucketName: string
   expiresAt: Date
+  resourceType: string
+  resourceId: string
+  purpose: string
+  // and purpose? like avatar/profile?
 }
 
 export interface IFilesMetadataEntity extends IEntityMethodBaseProperties<IFilesMetadataBase> {
-  markAsCompleted (): void
-  markAsFailed (): void
-  isCompleted (): boolean
+  activate (): void
+  fail (): void
+  isActive (): boolean
   isFailed (): boolean
   isPending (): boolean
   isExpired(): boolean
+  location: string
 }

@@ -1,5 +1,5 @@
 import { IFilesMetadataBase, IFilesMetadataEntity, FilesMetadataEntity, FileStatus } from '@/entities/files-metadata'
-import { IFilesMetadataInput, IFilesMetadataRepositoryService } from './interfaces'
+import { IFilesMetadataInput, IFilesMetadataRepositoryService, IGetOneLatestByResourceOpt } from './interfaces'
 import { BaseService } from '@/utils/services/service'
 
 export class FilesMetadataService extends BaseService<IFilesMetadataBase, IFilesMetadataEntity> {
@@ -21,6 +21,19 @@ export class FilesMetadataService extends BaseService<IFilesMetadataBase, IFiles
       throw error;
     }
   }
+  async findOneOrCreate (
+    data: IFilesMetadataInput
+  ): Promise<FilesMetadataEntity>  {
+    // check if there's if there's any existing pending file.
+    const file = await this.getOneLatestByResource(data.resourceType, data.resourceId, {
+      purpose: data.purpose,
+      status: FileStatus.PENDING
+    });
+    if (file) {
+      return file;
+    }
+    return this.create(data);
+  }
 
   async update(id: string, data: Partial<IFilesMetadataBase>): Promise<FilesMetadataEntity|null> {
     const entity = await this.findByIdStrict(id);
@@ -33,13 +46,36 @@ export class FilesMetadataService extends BaseService<IFilesMetadataBase, IFiles
     data.filesize && (entity.filesize = data.filesize);
     data.contentType && (entity.contentType = data.contentType);
     data.status && (entity.status = data.status);
+    data.resourceType && (entity.resourceType = data.resourceType);
+    data.resourceId && (entity.resourceId = data.resourceId);
+    data.purpose && (entity.purpose = data.purpose);
     await this.repositoryService.update(id, data);
     return entity;
   }
 
-  async markFileAsUploaded(id: string): Promise<boolean> {
+  async markAsActive(id: string): Promise<boolean> {
     return this.repositoryService.update(id, {
-      status: FileStatus.COMPLETED
+      status: FileStatus.ACTIVE
+    });
+  }
+
+  async getOneLatestByResource (
+    resourceType: string,
+    resourceId: string,
+    opt?: IGetOneLatestByResourceOpt
+  ) {
+    const result = await this.repositoryService.findOneLatestByResource(resourceType, resourceId, opt);
+    return result ? new FilesMetadataEntity(result) : null;
+
+  }
+  async getOneLatestActiveByResource (
+    resourceType: string,
+    resourceId: string,
+    opt?: Omit<IGetOneLatestByResourceOpt, 'status'>
+  ) {
+    return this.getOneLatestByResource(resourceType, resourceId, {
+      ...(opt || {}),
+      status: FileStatus.ACTIVE
     });
   }
 }

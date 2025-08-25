@@ -1,5 +1,5 @@
 {
-	"name": "template",
+	"name": "file-service",
 	"version": "0.0.1",
 	"description": "my-hono-app is a simple hono app.",
 	"scripts": {

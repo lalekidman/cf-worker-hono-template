@@ -18,6 +18,9 @@ export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): 
     private _filesize: number = 0;
     private _bucketName: string = '';
     private _expiresAt: Date = new Date(Date.now() + (60 * 60 * 1000)); // 1hr
+    private _resourceType: string = '';
+    private _resourceId: string = '';
+    private _purpose: string = '';
 
     constructor(data ? : Partial < IFilesMetadataBase & {expiresIn: number} >) {
       super(data);
@@ -29,7 +32,10 @@ export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): 
         filename,
         bucketName,
         expiresAt,
-        expiresIn
+        expiresIn,
+        resourceType,
+        resourceId,
+        purpose
       } = data || {};
 
       filename && (this.filename = filename);
@@ -37,6 +43,9 @@ export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): 
       filesize && (this.filesize = filesize);
       contentType && (this.contentType = contentType);
       bucketName && (this.bucketName = bucketName);
+      resourceType && (this.resourceType = resourceType);
+      resourceId && (this.resourceId = resourceId);
+      purpose && (this.purpose = purpose);
       if (expiresAt) {
         this.expiresAt = expiresAt
       } else if (expiresIn) {
@@ -155,18 +164,66 @@ export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): 
       this._status = value;
     }
 
-    public markAsCompleted() {
-      this._status = FileStatus.COMPLETED;
+    /**
+     * Getter resourceType
+     * @return {string }
+     */
+    public get resourceType(): string  {
+      return this._resourceType;
     }
-    public markAsFailed() {
+
+    /**
+     * Setter resourceType
+     * @param {string } value
+     */
+    public set resourceType(value: string ) {
+      this._resourceType = value;
+    }
+
+    /**
+     * Getter resourceId
+     * @return {string }
+     */
+    public get resourceId(): string  {
+      return this._resourceId;
+    }
+
+    /**
+     * Setter resourceId
+     * @param {string } value
+     */
+    public set resourceId(value: string ) {
+      this._resourceId = value;
+    }
+
+    /**
+     * Getter purpose
+     * @return {string }
+     */
+    public get purpose(): string  {
+      return this._purpose;
+    }
+
+    /**
+     * Setter purpose
+     * @param {string } value
+     */
+    public set purpose(value: string ) {
+      this._purpose = value;
+    }
+
+    public activate() {
+      this._status = FileStatus.ACTIVE;
+    }
+    public fail() {
       this._status = FileStatus.FAILED;
     }
 
     public isPending(): boolean {
       return this.status === FileStatus.PENDING.toString();
     }
-    public isCompleted(): boolean {
-      return this.status === FileStatus.COMPLETED.toString();
+    public isActive(): boolean {
+      return this.status === FileStatus.ACTIVE.toString();
     }
     public isFailed(): boolean {
       return this.status === FileStatus.FAILED.toString();
@@ -176,7 +233,7 @@ export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): 
      * @param {location }
      */
     public get location() {
-      return `${this.filepath}/${this.filename}`;
+      return `${this.filepath}/${Math.floor(this.createdAt.getTime() / 1000)}-${this.id}-${this.filename}`;
     }
     public isExpired(): boolean {
       return this.expiresAt.getTime() < Date.now();
@@ -195,6 +252,9 @@ export const makeFilesMetadataEntity = (dependencies: IEntityBaseDependencies): 
         bucketName: this.bucketName,
         status: this.status,
         expiresAt: this.expiresAt,
+        resourceType: this.resourceType,
+        resourceId: this.resourceId,
+        purpose: this.purpose,
       }
     }
   }

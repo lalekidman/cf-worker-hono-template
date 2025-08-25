@@ -2,6 +2,13 @@ import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } fro
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { PresignedUrlRequest, PresignedUrlResponse } from '@/validations/files-metadata';
 
+interface IGeneratePresignedUrlInput {
+  contentType: string
+  filesize: number
+  key: string
+  bucketName: string
+  expiresIn: number
+}
 export class R2Service {
   private s3Client: S3Client;
   
@@ -22,19 +29,16 @@ export class R2Service {
     });
   }
 
-  async generatePresignedUrl(request: PresignedUrlRequest & {filepath: string, bucketName?: string}): Promise<PresignedUrlResponse> {
+  async generatePresignedUrl(request: IGeneratePresignedUrlInput): Promise<PresignedUrlResponse> {
     // Generate a unique key for the file
-    const timestamp = Date.now();
-    const randomSuffix = Math.random().toString(36).substring(2, 15);
-    const key = `${request.filepath}/${timestamp}-${randomSuffix}-${request.filename}`;
-
+    // const key = `${request.filepath}/${timestamp}-${randomSuffix}-${request.filename}`;
     const expiresAt = new Date(Date.now() + (request.expiresIn * 1000));
 
     try {
       // Create a PutObjectCommand for uploading the file
       const command = new PutObjectCommand({
         Bucket: this.bucketName,
-        Key: key,
+        Key: request.key,
         ContentType: request.contentType,
         ContentLength: request.filesize,
       });
@@ -46,7 +50,7 @@ export class R2Service {
 
       return {
         uploadUrl,
-        key,
+        key: request.key,
         expiresAt,
       };
     } catch (error) {

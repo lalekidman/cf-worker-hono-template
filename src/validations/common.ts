@@ -9,8 +9,8 @@ export const slugValidationSchema = z.object({
 
 export const ResponseBaseSchema = idValidationSchema.extend({
   _v: z.number(),
-  // createdAt: z.date(),
-  // updatedAt: z.date(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
 });
 
 export const QueryBaseValidationSchema = z.object({

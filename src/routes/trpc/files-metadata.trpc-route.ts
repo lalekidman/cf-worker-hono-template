@@ -1,12 +1,18 @@
 import { R2Service } from "@/lib/r2";
 import { protectedProcedure, router } from "@/lib/trpc";
-import { presignedUrlSchema, createFileMetadataSchema, updateFileMetadataSchema, fileIdSchema, fileMetadataUpdateStatusInputSchema } from "@/validations";
+import { presignedUrlSchema, createFileMetadataSchema, updateFileMetadataSchema, fileIdSchema, fileMetadataUpdateStatusInputSchema, fileMetadataValidationSchema, fileGetByResourceQuery } from "@/validations";
 import { FilesMetadataService } from "@/services/files-metadata";
 import { TRPCError } from "@trpc/server";
 import { FilesMetadataRepositoryService } from "@/db/services/files-metadata.repository.service";
-
+import z from "zod";
+const getR2Service = (bucketName: string, env: Cloudflare.Env) => {
+  const accountId = env.R2_ACCOUNT_ID;
+  const accessKeyId = env.R2_ACCESS_KEY_ID;
+  const secretAccessKey = env.R2_SECRET_ACCESS_KEY;
+  return new R2Service(accountId, accessKeyId, secretAccessKey, bucketName);
+}
 export const filesMetadataRoute = router({
-  generatePresignedUrl: protectedProcedure
+  createPresign: protectedProcedure
     .input(presignedUrlSchema)
     .mutation(async ({ input, ctx }) => {
       const accountId = ctx.c.env.R2_ACCOUNT_ID;
@@ -18,23 +24,54 @@ export const filesMetadataRoute = router({
         throw new Error('R2 credentials not configured');
       }
       const service = new FilesMetadataService(new FilesMetadataRepositoryService(ctx.db));
-      const filemetadata = await service.create({
+      const filemetadata = await service.findOneOrCreate({
         ...input,
         filepath: "uploads",
         bucketName
       });
-      const r2Service = new R2Service(accountId, accessKeyId, secretAccessKey, filemetadata.bucketName);
+      const r2Service = getR2Service(filemetadata.bucketName, ctx.c.env);
       return await r2Service.generatePresignedUrl({
-        ...filemetadata.toObject(),
-        expiresIn: input.expiresIn
+        bucketName: filemetadata.bucketName,
+        contentType: filemetadata.contentType,
+        filesize: filemetadata.filesize,
+        key: filemetadata.location,
+        expiresIn: (filemetadata.createdAt.getTime() - filemetadata.expiresAt.getTime())
       });
     }),
 
   get: protectedProcedure
     .input(fileIdSchema)
-    .mutation(async ({ input, ctx }) => {
+    .output(fileMetadataValidationSchema.extend({url: z.string()}))
+    .query(async ({ input, ctx }) => {
       const service = new FilesMetadataService(new FilesMetadataRepositoryService(ctx.db));
-      return service.findById(input.id);
+      const file = await service.findByIdStrict(input.id);
+      const r2Service = getR2Service(file.bucketName, ctx.c.env);
+      const url = await r2Service.generatePresignedDownloadUrl(file.location);
+      
+      return {
+        ...file.toObject(),
+        url
+      }
+    }),
+
+  getByResource: protectedProcedure
+    .input(fileGetByResourceQuery)
+    .output(fileMetadataValidationSchema.extend({url: z.string()}).nullable())
+    .query(async ({ input, ctx }) => {
+      const service = new FilesMetadataService(new FilesMetadataRepositoryService(ctx.db));
+      const file = await service.getOneLatestActiveByResource(input.resourceType, input.resourceId, {
+        purpose: input.purpose
+      })
+      if (!file) {
+        return null;
+      }
+      const r2Service = getR2Service(file.bucketName, ctx.c.env);
+      const url = await r2Service.generatePresignedDownloadUrl(file.location);
+      
+      return {
+        ...file.toObject(),
+        url
+      }
     }),
 
   updateStatus: protectedProcedure
@@ -47,7 +84,7 @@ export const filesMetadataRoute = router({
       return result
     }),
 
-  deleteFileMetadata: protectedProcedure
+  delete: protectedProcedure
     .input(fileIdSchema)
     .mutation(async ({ input, ctx }) => {
       const service = new FilesMetadataService(new FilesMetadataRepositoryService(ctx.db));

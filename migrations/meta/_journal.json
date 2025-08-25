@@ -36,6 +36,20 @@
       "when": 1755961672103,
       "tag": "0004_glossy_pixie",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1756126451440,
+      "tag": "0005_outstanding_killraven",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1756128470205,
+      "tag": "0006_salty_sabretooth",
+      "breakpoints": true
     }
   ]
 }
