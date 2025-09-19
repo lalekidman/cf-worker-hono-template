@@ -16,7 +16,7 @@ This utility provides Relay-spec cursor-based pagination for Drizzle ORM queries
 ### 1. Import the utility
 
 ```typescript
-import { RelayPagination, RelayPaginationArgs } from '@/utils/pagination';
+import { RelayPagination, RelayPaginationArgs } from '@/shared/utils/pagination';
 ```
 
 ### 2. Create pagination instance
@@ -172,7 +172,7 @@ GET /communities/relay?first=10
 ### Quick pagination without instantiation
 
 ```typescript
-import { RelayPagination } from '@/utils/pagination';
+import { RelayPagination } from '@/shared/utils/pagination';
 
 const connection = await RelayPagination.paginate<Community>(
   db,

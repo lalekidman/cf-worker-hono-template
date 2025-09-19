@@ -1,7 +1,7 @@
 import { createMiddleware } from "hono/factory";
-import { Env, Variables } from "@/interfaces";
+import { Env, Variables } from "@/shared/interfaces";
 import { createLocalJWKSet, jwtVerify, JWTVerifyResult } from 'jose'
-import { ResponseHandler } from "@/utils/response-handler";
+import { ResponseHandler } from "@/shared/response-handler";
 import { Context } from "hono";
 
 const handleDecodeJwt = async (c: Context<{ Bindings: Cloudflare.Env }>): Promise<JWTVerifyResult['payload']> => {

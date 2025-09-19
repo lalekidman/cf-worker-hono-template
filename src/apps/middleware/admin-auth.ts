@@ -1,8 +1,8 @@
 import { createMiddleware } from "hono/factory";
-import { adminAuth } from "@/lib/auth-admin";
-import { Env, Variables } from "@/interfaces";
+// import { adminAuth } from "@/apps/integrations/auth/auth-admin";
+import { Env, Variables } from "@/shared/interfaces";
 import { createRemoteJWKSet, createLocalJWKSet, jwtVerify, JWTVerifyResult } from 'jose'
-import { ResponseHandler } from "@/utils/response-handler";
+import { ResponseHandler } from "@/shared/response-handler";
 import { Context } from "hono";
 
 const handleDecodeAdminJwt = async (c: Context): Promise<JWTVerifyResult['payload']> => {

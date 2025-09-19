@@ -1,8 +1,8 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import { Context } from 'hono';
-import { Env, Variables } from '@/interfaces';
-import { handleUserDecodeJwt, handleAdminDecodeJwt } from '@/lib/auth';
-import { createDB } from '@/db'
+import { Env, Variables } from '@/shared/interfaces';
+import { handleUserDecodeJwt, handleAdminDecodeJwt } from '@/apps/integrations/auth/auth';
+import { createDB } from '@/apps/database'
 
 export interface TRPCContext {
   c: Context<{ Bindings: Env; Variables: Variables }>;

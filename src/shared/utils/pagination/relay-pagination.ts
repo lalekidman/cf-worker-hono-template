@@ -1,5 +1,5 @@
 import { SQL, and, or, gt, lt, eq, desc, asc } from 'drizzle-orm';
-import { DB } from '@/db';
+import { DB } from '@/apps/database';
 import { 
   RelayPaginationArgs, 
   RelayPaginationOptions,

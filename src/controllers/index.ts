@@ -1,1 +1,0 @@
-export { errorController } from "./error.controller";

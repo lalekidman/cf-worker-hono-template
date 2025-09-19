@@ -1,9 +1,15 @@
-import { createTRPCContext, router } from '@/lib/trpc';
+import { createTRPCContext, router } from '@/apps/integrations/trpc/trpc';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { Context } from 'hono';
 
+// Import module routers - will be added as modules are created
+// import { applicationRouter } from '@/application-management/routes/application.tRPC-route';
+
 export const appRouter = router({
+  // application: applicationRouter,
+  // Add new modules here
 });
+
 export type AppRouter = typeof appRouter;
 
 export function createTRPCHandler() {
@@ -17,8 +23,6 @@ export function createTRPCHandler() {
         console.error(`tRPC Error on ${path}:`, JSON.stringify(error, null, 2));
       },
     });
-
     return response;
   };
 }
-// export type AppRouter = ReturnType<typeof appRoute>;
